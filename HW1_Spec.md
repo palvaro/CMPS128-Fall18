@@ -1,5 +1,7 @@
 # Assignment 1 : Introduction to Docker and REST API
 
+## Due date: Jan 24th 2018, Wednesday 11.59 pm
+
 ## Instructions
 For the first assignment, you will create a REST API service that is able to differentiate between GET, POST and PUT requests, and responds to GET requests for the endpoints *'hello'* and *'check'*.
 You will use Docker to create an image which must expose a web server at port 8080 that implements the REST interface given below.
@@ -58,7 +60,7 @@ wrote the web server app in python
 
 5. Create a team (NOTE: Do NOT create a repo before creating a team, it will be 'wasted')  
   1. Team ID needs to be unique at bitbucket, but prefix it with cmps128 e.g. cmps128team1.
-  2. Add team members -- *usardesa* and *palvaro*
+  2. Add team members -- *UmangSardesai* and *palvaro*
 
 6. Create a repository for the team. Ensure that it is private.
 
