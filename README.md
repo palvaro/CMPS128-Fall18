@@ -1,11 +1,11 @@
-# CMPS128 Winter 2017 
+# CMPS128 Winter 2018
 ## Distributed Systems
 | key | value | 
 |-----|-------|
 |When: | Monday, Wednesday and Friday at <b>1:20 PM</b>. |
 |Where: | Merrill Classroom 102 |
 |Who: | [Peter Alvaro](http://people.ucsc.edu/~palvaro/) |
-|Office hours: | W/F 12-1PM |
+|Office hours: | W 12-1PM, F 11AM-12 |
 |Prerequisites: | CMPS101 or CE150 required. CMPS111 or CMPS105 recommended. |
 |Text: | [Distributed Systems](http://www.amazon.com/Distributed-Systems-Concepts-Design-5th/dp/0132143011/), Coulouris et al.|
 |TA: | Umang Sardesai (email: umang at ucsc )|
