@@ -89,8 +89,8 @@ Pre-condition - localhost:4000 forwards to 8080 of the docker container running 
       - response body:
 <pre>
 		{
-      'replaced': 0, // 1 if an existing key's val was replaced
-      'msg': 'success'
+      "replaced": 0, // 1 if an existing key's val was replaced
+      "msg": "success"
 		}
 </pre>
 
@@ -100,8 +100,8 @@ Pre-condition - localhost:4000 forwards to 8080 of the docker container running 
 		  - response body:
 <pre>
 		{
-      'replaced': 1, // 0 if key did not exist
-      'msg': 'success'
+      "replaced": 1, // 0 if key did not exist
+      "msg": "success"
 		}
 </pre>
 		
@@ -112,8 +112,8 @@ Pre-condition - localhost:4000 forwards to 8080 of the docker container running 
       - response body:
 <pre>
 			{
-				'msg' : 'error',
-				'error' : 'key does not exist'
+				"msg" : "error",
+				"error" : "key does not exist"
 			}
 </pre>
     - case 'foo' exists
@@ -122,8 +122,8 @@ Pre-condition - localhost:4000 forwards to 8080 of the docker container running 
       - response body:
 <pre>
 			{
-				'msg' : 'success',
-				'value': 'bart'
+				"msg" : "success",
+				"value": "bart"
 		 	}
 </pre>
 
@@ -134,8 +134,8 @@ Pre-condition - localhost:4000 forwards to 8080 of the docker container running 
       - response body:
 <pre>
 			{
-				'msg' : 'error',
-				'error' : 'key does not exist'
+				"msg" : "error",
+				"error" : "key does not exist"
 		 	}
 </pre>
 
@@ -145,7 +145,7 @@ Pre-condition - localhost:4000 forwards to 8080 of the docker container running 
       - response body:
 <pre>
 			{
-				'msg' : 'success'
+				"msg" : "success"
 		 	}
 </pre>
 
@@ -156,8 +156,8 @@ Pre-condition - localhost:4000 forwards to 8080 of the docker container running 
       - response body:
 <pre>
 			{
-				'msg' : 'error',
-				'error' : 'service is not available'
+				"msg" : "error",
+				"error" : "service is not available"
 		 	}
 </pre>
 
