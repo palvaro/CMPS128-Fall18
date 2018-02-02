@@ -105,7 +105,7 @@ Pre-condition - localhost:4000 forwards to 8080 of the docker container running 
 		}
 </pre>
 		
-2. GET localhost:4000/kvs -d "key=foo"
+2. GET localhost:4000/kvs?key=foo
     - case 'foo' does not exist
       - status code : 404
       - response type : application/json
@@ -127,7 +127,7 @@ Pre-condition - localhost:4000 forwards to 8080 of the docker container running 
 		 	}
 </pre>
 
-3. DELETE localhost:4000/kvs -d "key=foo"
+3. DELETE localhost:4000/kvs?key=foo
     - case 'foo' does not exist
       - status code : 404
       - response type : application/json
@@ -163,7 +163,7 @@ Pre-condition - localhost:4000 forwards to 8080 of the docker container running 
 
 ### Things to note:
 
-1. Data will be passed via '-d' parameter in cURL and not via arguments.
+1. Parameters will be passed via the request body for POST/PUT and via the URL for GET/DEL.
 
 2. Here's a sample of how three containers will be initiated in a Docker subnet:
 ```bash
