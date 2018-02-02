@@ -166,6 +166,13 @@ Pre-condition - localhost:4000 forwards to 8080 of the docker container running 
 1. Parameters will be passed via the request body for POST/PUT and via the URL for GET/DEL.
 
 2. Here's a sample of how three containers will be initiated in a Docker subnet:
+
+a) First create the network:
+```
+docker network create --subnet=10.0.0.0/16 mynet
+```
+
+b) Start containters:
 ```bash
 docker run -p 4000:8080 --net=mynet --ip=10.0.0.20 -d contname
 docker run -p 4001:8080 --net=mynet -e MAINIP=10.0.0.20:8080 -d contname
