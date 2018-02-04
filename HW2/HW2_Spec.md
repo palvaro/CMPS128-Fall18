@@ -1,5 +1,7 @@
 # Assignment 2 : A single-site Key-value store with forwarding
 
+## Due date: Feb 9th 2018, Friday 11.59 pm
+
 ## Instructions
 This assignment consists of two parts: 
 1. A REST-accessible single-site key-value store. 
