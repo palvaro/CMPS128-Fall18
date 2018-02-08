@@ -173,7 +173,7 @@ class TestHW2(unittest.TestCase):
         self.__class__.all_tests_done = True
         shell_command = "docker stop " + str(self.__class__.node_ids[0])
         subprocess.check_output(shell_command, shell=True)        
-        res = requests.get(self.__class__.nodes_address[1]+'/kvs/'+self.__class__.key1)
+        res = requests.get(self.__class__.nodes_address[2]+'/kvs?key='+self.__class__.key1)
         d = res.json()
         self.assertEqual(d['msg'],'error')
         self.assertEqual(d['error'],'service is not available')              
