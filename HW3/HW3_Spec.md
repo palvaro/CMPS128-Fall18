@@ -84,7 +84,7 @@ The following API will be used:
 
 2. To remove a Node:
 
- - PUT localhost:8080/kvs/view_update?type=remove  -d  "ip_port=10.0.0.20:8080"
+ - PUT localhost:8081/kvs/view_update -d "ip_port=10.0.0.20:8080&type=remove"
 ```
 {
      'msg': 'success'
