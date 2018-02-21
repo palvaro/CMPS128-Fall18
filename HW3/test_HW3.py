@@ -61,7 +61,7 @@ def send_put_request(hostname, node, key, value):
     #print "sending put request " + "http://" + hostname + ":" + node.access_port + "/kvs/" + key
     if PRINT_HTTP_REQUESTS:
         print "PUT request:" + "http://" + hostname + ":" + node.access_port + "/kvs; key " + key +" and value " + str(value)
-    r = req.put("http://" + hostname + ":" + node.access_port + "/kvs", data={'key': key, 'val':value})
+    r = req.put("http://" + hostname + ":" + node.access_port + "/kvs", data={'key': key, 'value':value})
     if PRINT_HTTP_RESPONSES:
         print "Response:", r.text, r.status_code
     d = r.json()
@@ -184,7 +184,7 @@ if __name__ == "__main__":
     keys = generate_random_keys(num_keys)
     print OKBLUE + "\nAdding " + str(num_keys) + " randomly generated keys "+ ENDC
     counts = add_keys(hostname, kvs_nodes, keys, value = 1)
-    if sum([val for _, val in counts.iteritems()]) != num_keys:
+    if sum([int(val) for _, val in counts.iteritems()]) != num_keys:
         print FAIL + "SOME KEYS WERE NOT ADDDED SUCCESSFULY" + ENDC
 
 
@@ -216,7 +216,7 @@ if __name__ == "__main__":
     else:
         print OKGREEN + "OK: KEYS ARE BALANCED AFTER ADDITION OF A NODE" + ENDC
         print counts
-    if sum([val for _, val in counts.iteritems()]) != num_keys:
+    if sum([int(val) for _, val in counts.iteritems()]) != num_keys:
         print FAIL + "SOME KEYS WERE LOST AFTER AN ADDITION OF A NODE" + ENDC
     else:    
         print OKGREEN + "OK: NO KEY LOSS AFTER AN ADDITION OF A NODE" + ENDC
@@ -236,7 +236,7 @@ if __name__ == "__main__":
     else:
         print OKGREEN + "OK: KEYS ARE BALANCED AFTER REMOVING A NODE" + ENDC
         print counts
-    if sum([val for _, val in counts.iteritems()]) != num_keys:
+    if sum([int(val) for _, val in counts.iteritems()]) != num_keys:
         print FAIL + "SOME KEYS WERE LOST AFTER DELETING A NODE" + ENDC
     else:    
         print OKGREEN + "OK: NO KEY LOSS AFTER REMOVING A NODE" + ENDC
