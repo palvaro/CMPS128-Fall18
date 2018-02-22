@@ -111,7 +111,7 @@ def add_node_to_kvs(hostname, cur_node, new_node):
 def delete_node_from_kvs(hostname, cur_node, node_to_delete):
     if PRINT_HTTP_REQUESTS:
         print "PUT request: " + "http://" + hostname + ":" + cur_node.access_port + "/kvs/view_update" + "; data: " + 'ip_port=' + node_to_delete.ip + ":8080 and type is remove"
-    r = req.put("http://" + hostname + ":" + cur_node.access_port + "/kvs/view_update?type=remove",
+    r = req.put("http://" + hostname + ":" + cur_node.access_port + "/kvs/view_update",
             data={'ip_port':node_to_delete.ip + ":8080", "type":"remove"})
     if PRINT_HTTP_RESPONSES:
         print "Response:", r.text, r.status_code
