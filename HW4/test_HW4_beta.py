@@ -7,6 +7,8 @@ import os
 import subprocess
 import requests as req
 import time
+import traceback
+import sys
 
 NODE_COUNTER = 2
 PRINT_HTTP_REQUESTS = False
@@ -49,7 +51,7 @@ def generate_random_keys(n):
 
 def send_get_request(hostname, node, key, causal_payload=''):
     d = None
-    get_str = "http://" + hostname + ":" + node.access_port + "/kvs?key=" + key + "&causal_payload=" + causal_payload 
+    get_str = "http://" + hostname + ":" + str(node.access_port) + "/kvs?key=" + key + "&causal_payload=" + causal_payload 
     try:
         if PRINT_HTTP_REQUESTS:
             print "Get request: " + get_str
@@ -73,7 +75,7 @@ def send_get_request(hostname, node, key, causal_payload=''):
 
 def send_put_request(hostname, node, key, value, causal_payload=''):
     d = None
-    put_str = "http://" + hostname + ":" + node.access_port + "/kvs"
+    put_str = "http://" + hostname + ":" + str(node.access_port) + "/kvs"
     data = {'value':value, 'causal_payload':causal_payload, 'key':key}
     try:
         if PRINT_HTTP_REQUESTS:
@@ -122,10 +124,10 @@ def add_keys(hostname, nodes, keys, value):
     return d   #returns number of keys in each partition.             
 
 def stop_all_nodes(sudo):                                           
-    running_containers = subprocess.check_output([sudo, 'docker',  'ps', '-q'])
-    if len(running_containers):
-        print "Stopping all nodes"
-        os.system(sudo + " docker kill $(" + sudo + " docker ps -q)") 
+    # running_containers = subprocess.check_output([sudo, 'docker',  'ps', '-q'])
+    # if len(running_containers):
+    print "Stopping all nodes"
+    os.system(sudo + " docker kill $(" + sudo + " docker ps -q)") 
 
 def stop_node(node, sudo='sudo'):
     cmd_str = sudo + " docker kill %s" % node.id
@@ -145,7 +147,7 @@ def get_partition_id_for_key(node, key):
     return resp_dict['partition_id']
 
 def get_all_partitions_ids(node):
-    get_str = "http://" + hostname + ":" + node.access_port + "/kvs/get_all_partition_ids"
+    get_str = "http://" + hostname + ":" + str(node.access_port) + "/kvs/get_all_partition_ids"
     try:
         if PRINT_HTTP_REQUESTS:
             print "Get request: " + get_str
@@ -158,12 +160,12 @@ def get_all_partitions_ids(node):
                 raise Exception("Field \"" + field + "\" is not present in response " + str(d))
     except Exception as e:
         print "THE FOLLOWING GET REQUEST RESULTED IN AN ERROR: ",
-        print get_str + ' data field ' +  str(data)
+        print get_str 
         print e
     return d['partition_id_list'] # returns the current partition ID list of the KVS
 
 def get_partition_id_for_node(node):
-    get_str = "http://" + hostname + ":" + node.access_port + "/kvs/get_partition_id"
+    get_str = "http://" + hostname + ":" + str(node.access_port) + "/kvs/get_partition_id"
     try:
         if PRINT_HTTP_REQUESTS:
             print "Get request: " + get_str
@@ -176,15 +178,16 @@ def get_partition_id_for_node(node):
                 raise Exception("Field \"" + field + "\" is not present in response " + str(d))
     except Exception as e:
         print "THE FOLLOWING GET REQUEST RESULTED IN AN ERROR: ",
-        print get_str + ' data field ' +  str(data)
+        print get_str
         print e
     return d['partition_id']    
 
 def get_partition_members(node, partition_id):
-    get_str = "http://" + hostname + ":" + node.access_port + "/kvs/get_partition_members?partition_id=" + partition_id 
+    get_str = "http://" + hostname + ":" + str(node.access_port) + "/kvs/get_partition_members?partition_id=" + str(partition_id)
+    d = None
     try:
         if PRINT_HTTP_REQUESTS:
-            print "Get request: " + get_str + " data " + str(data)
+            print "Get request: " + get_str
         r = req.get(get_str)
         if PRINT_HTTP_RESPONSES:
             print "Response:", r.text, r.status_code
@@ -199,7 +202,7 @@ def get_partition_members(node, partition_id):
     return d['partition_members']    
 
 if __name__ == "__main__":
-    container_name = 'hw3'
+    container_name = 'hw4'
     hostname = 'localhost'
     network = 'mynet'
     sudo = 'sudo'
@@ -224,7 +227,7 @@ if __name__ == "__main__":
             print "Obtaining partition members for partition ", partition_id_for_key
             members = get_partition_members(nodes[0], partition_id_for_key)
             if len(members) != 2:
-                raise Exception("ERROR: the size of a partition %s should be 2, but it is %s" % (partition_id_for_key, len(members)))
+                raise Exception("ERROR: the size of a partition %d should be 2, but it is %d" % (partition_id_for_key, len(members)))
             
             part_nodes = []
             for ip_port in members:
@@ -243,7 +246,7 @@ if __name__ == "__main__":
                 stop_node(node, sudo=sudo)
             other_nodes = [n for n in nodes if n not in part_nodes]
 
-            get_str = "http://" + hostname + ":" + other_nodes[0].access_port + "/kvs?key=" + key + "&causal_payload=" + "" 
+            get_str = "http://" + hostname + ":" + other_nodes[0].access_port + "/kvs?key=" + keys[0] + "&causal_payload=" + "" 
             if PRINT_HTTP_REQUESTS:
                 print "Get request: " + get_str
             r = req.get(get_str)
@@ -255,4 +258,5 @@ if __name__ == "__main__":
         except Exception as e:
             print "Exception in test 3"
             print e
+            traceback.print_exc(file=sys.stdout)
         stop_all_nodes(sudo)
