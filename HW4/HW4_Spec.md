@@ -122,7 +122,15 @@ The following methods allow a client to obtain information about partitions.
     "partition_members": ["10.0.0.21:8080", "10.0.0.22:8080", "10.0.0.23:8080"]
 }
 ```
+### Additional endpoint
+Another endpoint (same as HW3) to get the number of keys in one instance:
 
+ - GET localhost:8081/kvs/get_number_of_keys:
+```
+{
+     “count”: 25
+}
+```
 ### Error Responses
 All error responses contain 2 fields "msg" and "error". The error field contains the details about the error, for example
 ```
