@@ -73,6 +73,17 @@ def send_get_request(hostname, node, key, causal_payload=''):
         print e
     return d
 
+def send_simple_get_request(hostname, node, key, causal_payload=''):
+    """ The function does not check any conditions on the responce object.
+    It returns raw request."""
+    get_str = "http://" + hostname + ":" + str(node.access_port) + "/kvs?key=" + key + "&causal_payload=" + causal_payload
+    if PRINT_HTTP_REQUESTS:
+        print "Get request: " + get_str
+    r = req.get(get_str)
+    if PRINT_HTTP_RESPONSES:
+        print r.text, r.status_code
+    return r
+
 def send_put_request(hostname, node, key, value, causal_payload=''):
     d = None
     put_str = "http://" + hostname + ":" + str(node.access_port) + "/kvs"
@@ -283,7 +294,7 @@ if __name__ == "__main__":
     hostname = 'localhost'
     network = 'mynet'
     sudo = 'sudo'
-    tests_to_run = [1,2,3] #  
+    tests_to_run = [1,2,3,4] #  
 
     if 1 in tests_to_run:
         try: # Test 1
@@ -394,6 +405,7 @@ if __name__ == "__main__":
             print "Exception in test 2"
             print e
             traceback.print_exc(file=sys.stdout)
+        stop_all_nodes(sudo)            
 
     if 3 in tests_to_run:
         try: # Test 3
@@ -423,4 +435,44 @@ if __name__ == "__main__":
         except Exception as e:
             print "Exception in test 3"
             print e
-            traceback.print_exc(file=sys.stdout)      
+            traceback.print_exc(file=sys.stdout)
+        stop_all_nodes(sudo)            
+
+    if 4 in tests_to_run:
+        try: # Test 4
+            num_keys = 3
+            test_description = "Test 4: Start 4 nodes with K=2. Generate random keys. I send a get request to one key to get the partition it is from. I then disconnect all the replicas in that partition. In this case, the key should be unavailable. I then connect one replica back and the key should available."
+            print HEADER + "" + test_description  + ENDC
+            nodes = start_kvs(4, container_name, K=2, net=network, sudo=sudo)
+            keys = generate_random_keys(num_keys)
+            add_keys(hostname, nodes, keys, -1)
+            partition_id = get_partition_id_for_key(nodes[0], keys[0])
+            members = get_partition_members(nodes[0], partition_id)
+            part_nodes = [find_node(nodes, ip_port) for ip_port in members]
+            print "key %s belongs to partition %d with nodes %s and %s" % (keys[0], partition_id, part_nodes[0], part_nodes[1])
+            
+            print "Disconnecting both nodes to verify that the key is unavailable"
+            disconnect_node(part_nodes[0], network, sudo)
+            disconnect_node(part_nodes[1], network, sudo)
+
+            other_nodes = [n for n in nodes if n not in part_nodes]
+            r = send_simple_get_request(hostname, other_nodes[0], keys[0], causal_payload='')
+            if r.status_code in [200, 201, '200', '201']:
+                raise Exception("ERROR: A KEY %s SHOULD NOT BE AVAILABLE AS ITS PARTITION IS DOWN!!!" % keys[0])
+            print "Good, the key is unavailable"
+
+            print "Connecting one node back and verifying that the key is accessible"
+            connect_node(part_nodes[1], network, sudo)
+            time.sleep(TB)
+            r = send_simple_get_request(hostname, other_nodes[0], keys[0], causal_payload='')
+            d = r.json()
+            print d
+            if not d.has_key('value') or int(d['value']) != -1:
+                raise Exception("ERROR: service is unavailable or the value of the key changed after the network healed")
+            print "Good, the key is available"
+
+        except Exception as e:
+            print "Exception in test 3"
+            print e
+            traceback.print_exc(file=sys.stdout)
+        stop_all_nodes(sudo)
