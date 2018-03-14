@@ -74,7 +74,7 @@ def send_get_request(hostname, node, key, causal_payload=''):
     return d
 
 def send_simple_get_request(hostname, node, key, causal_payload=''):
-    """ The function does not check any conditions on the responce object.
+    """ The function does not check any conditions on the response object.
     It returns raw request."""
     get_str = "http://" + hostname + ":" + str(node.access_port) + "/kvs?key=" + key + "&causal_payload=" + causal_payload
     if PRINT_HTTP_REQUESTS:
@@ -126,7 +126,7 @@ def start_kvs(num_nodes, container_name, K=2, net='net', sudo='sudo'):
 
 def start_new_node(container_name, K=2, net='net', sudo='sudo'):
     ip, port = generate_ip_port()
-    cmd_str = sudo + ' docker run -d -p ' + port + ":8080 --net=" + net + " -e K=" + str(K) + " --ip=" + ip + " -e IPPORT=\"" + ip + ":8080" + "\" " + container_name
+    cmd_str = sudo + ' docker run -d -p ' + port + ":8080 --net=" + net + " -e K=" + str(K) + " --ip=" + ip + " -e ip_port=\"" + ip + ":8080" + "\" " + container_name
     print cmd_str
     node_id = subprocess.check_output(cmd_str, shell=True).rstrip('\n')
     time.sleep(5)
@@ -472,7 +472,68 @@ if __name__ == "__main__":
             print "Good, the key is available"
 
         except Exception as e:
-            print "Exception in test 3"
+            print "Exception in test 4"
             print e
             traceback.print_exc(file=sys.stdout)
         stop_all_nodes(sudo)
+
+    if 5 in tests_to_run:
+        try: # Test 5
+            num_keys = 3
+            test_description = "Test 5: Start 4 nodes with K=2. Generate random keys. I send a get request to one key to get the partition it is from. I then disconnect one of the nodes in the partitions. I send a request to the other partition to update the same key. Then I connect the node back, wait for 5 seconds for network to heal and disconnect the other node in partition."
+            print HEADER + "" + test_description  + ENDC
+            nodes = start_kvs(4, container_name, K=2, net=network, sudo=sudo)
+            keys = generate_random_keys(num_keys)
+            add_keys(hostname, nodes, keys, 7)
+            partition_id = get_partition_id_for_key(nodes[0], keys[0])
+            members = get_partition_members(nodes[0], partition_id)
+            part_nodes = [find_node(nodes, ip_port) for ip_port in members]
+            print "key %s belongs to partition %d with nodes %s and %s" % (keys[0], partition_id, part_nodes[0], part_nodes[1])
+            
+            print "Disconnecting one of the nodes in the partition"
+            disconnect_node(part_nodes[0], network, sudo)
+
+            print "Updating the key..."
+            d = send_put_request(hostname, other_nodes[0],  keys[0], 17, causal_payload=d['causal_payload'])
+
+            print "Connecting back the nodeand disconnecting other node in the partition"
+            connect_node(part_nodes[0], network, sudo)
+            time.sleep(TB)
+            disconnect_node(part_nodes[1], network, sudo)
+            time.sleep(1)
+            d = send_get_request(hostname, other_nodes[1], keys[0], causal_payload=d['causal_payload'])
+            if int(d['value']) != 17:
+                raise Exception("ERROR: THE VALUE IS STALE AFTER THE NETWORK WAS HEALED AND A %d SECOND THRESHOLD!" % TB)
+            print "OK, the value is up to date!"
+        except Exception as e:
+            print "Exception in test 5"
+            print e
+            traceback.print_exc(file=sys.stdout)
+        stop_all_nodes(sudo)
+
+    if 6 in tests_to_run:
+        try: # Test 6
+            num_keys = 3
+            test_description = "Test 6: Test for data replication. Failing of this test indicates the data replication hasn't been implemented correctly." 
+            print test_description
+            nodes = start_kvs(6, container_name, K=3, net=network, sudo=sudo)
+            keys = generate_random_keys(num_keys)
+            add_keys(hostname, nodes, keys, -1)
+            partition_id = get_partition_id_for_key(nodes[0], keys[0])
+            members = get_partition_members(nodes[0], partition_id)
+            part_nodes = [find_node(nodes, ip_port) for ip_port in members]
+            print "key %s belongs to partition %d with nodes %s, %s and %s" % (keys[0], partition_id, part_nodes[0]part_nodes[0],part_nodes[2])
+            
+            r = send_simple_get_request(hostname, part_nodes[0], keys[0], causal_payload='')
+            d = r.json()
+            d = send_put_request(hostname, part_nodes[1],  keys[0], 15, causal_payload=d['causal_payload'])
+            r = send_simple_get_request(hostname, part_nodes[2],  keys[0], causal_payload=d['causal_payload'])
+            d = r.json()
+            if int(d['value']) != 15:
+                raise Exception("ERROR: THE VALUE IS STALE!. DATA REPLICATION NOT IMPLEMENTED CORRECTLY")
+            print "OK, the value is up to date!"
+        except Exception as e:
+            print "Exception in test 6"
+            print e
+            traceback.print_exc(file=sys.stdout)
+        stop_all_nodes(sudo)                
