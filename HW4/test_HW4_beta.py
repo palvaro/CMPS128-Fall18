@@ -294,7 +294,7 @@ if __name__ == "__main__":
     hostname = 'localhost'
     network = 'mynet'
     sudo = 'sudo'
-    tests_to_run = [1,2,3,4] #  
+    tests_to_run = [1,2,3,4,5,6,7] #  
 
     if 1 in tests_to_run:
         try: # Test 1
@@ -515,7 +515,7 @@ if __name__ == "__main__":
         try: # Test 6
             num_keys = 3
             test_description = "Test 6: Test for data replication. Failing of this test indicates the data replication hasn't been implemented correctly." 
-            print test_description
+            print HEADER + "" + test_description  + ENDC
             nodes = start_kvs(6, container_name, K=3, net=network, sudo=sudo)
             keys = generate_random_keys(num_keys)
             add_keys(hostname, nodes, keys, -1)
@@ -536,4 +536,78 @@ if __name__ == "__main__":
             print "Exception in test 6"
             print e
             traceback.print_exc(file=sys.stdout)
-        stop_all_nodes(sudo)                
+        stop_all_nodes(sudo)
+
+    if 7 in tests_to_run:
+        try: # Test 7
+            test_description = "Test 7: A kvs consists of 2 partitions with 2 replicas each. I send 60 randomly generated keys to the kvs. I add 2 nodes to the kvs. No keys should be dropped. Then, I kill a node and send a view_change request to remove the faulty instance. Again, no keys should be dropped."
+            print HEADER + "" + test_description  + ENDC
+            nodes = start_kvs(4, container_name, K=2, net=network, sudo=sudo)
+            keys = generate_random_keys(60)
+            add_keys(hostname, nodes, keys, 1)
+     
+            print "Adding 2 nodes..."
+            n1 = start_new_node(container_name, K=2, net=network, sudo=sudo)
+            n2 = start_new_node(container_name, K=2, net=network, sudo=sudo)
+
+            resp_dict1 = add_node_to_kvs(hostname, nodes[0], n1)
+            time.sleep(2)
+            resp_dict2 = add_node_to_kvs(hostname, nodes[2], n2)
+            time.sleep(2)
+
+            if not (resp_dict1 is not None and resp_dict2 is not None and 
+                resp_dict1['msg'] == 'success' and resp_dict2['msg'] == 'success'):
+                raise Exception("Problems with adding 2 new nodes")
+            print "Nodes were successfully added."
+
+            hm = {} # Dictionary of partition and its respective nodes
+            for x in range(len(nodes)):
+                part_id = get_partition_id_for_node(nodes[i])
+                if part_id not in hm:
+                    hm[part_id] = []
+                hm[part_id].append(nodes[i])
+
+            part_id1 = resp_dict1[partition_id]
+            new_part_id = part_id1       
+            if part_id1 not in hm:
+                hm[part_id1] = []
+            hm[part_id1].append(n1)
+            part_id2 = resp_dict2[partition_id]
+            hm[part_id2].append(n2)
+
+            print "Verifying that no keys were dropped..."
+            total_keys = 0
+            for key in hm.keys():
+                get_str = "http://" + hostname + ":" + str(hm[key][0].access_port) + "/kvs/get_number_of_keys"
+                r = req.get(get_str)
+                d = r.json()
+                total_keys = total_keys + d["count"]                
+            if total_keys != len(keys):
+                raise Exception("Total number of keys in KVS are not equal to ones added initially")
+            else:
+                print "OK, no keys were dropped after adding new nodes."
+
+            print "Stopping a node."
+            removed_node = hm[new_part_id].pop(0) 
+            stop_node(removed_node, sudo=sudo)
+            print "Sending a request to remove the faulty node from the key-value store."
+            resp_dict = delete_node_from_kvs(hostname, nodes[0],removed_node)
+            if not (resp_dict is not None and resp_dict['msg'] == 'success'):
+                raise Exception("Problems with deleting a node")
+            print "A node was successfully deleted."
+            
+            print "Verifying that no keys were dropped..."
+            total_keys = 0
+            for key in hm.keys():
+                get_str = "http://" + hostname + ":" + str(hm[key][0].access_port) + "/kvs/get_number_of_keys"
+                r = req.get(get_str)
+                d = r.json()
+                total_keys = total_keys + d["count"]                
+            if total_keys != len(keys):
+                raise Exception("Total number of keys in KVS are not equal to ones added initially")
+            else:
+                print "OK, no keys were dropped after adding new nodes."
+        except Exception as e:
+            print "Exception in test 7"
+            print e
+        stop_all_nodes(sudo)                        
