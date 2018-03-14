@@ -522,7 +522,7 @@ if __name__ == "__main__":
             partition_id = get_partition_id_for_key(nodes[0], keys[0])
             members = get_partition_members(nodes[0], partition_id)
             part_nodes = [find_node(nodes, ip_port) for ip_port in members]
-            print "key %s belongs to partition %d with nodes %s, %s and %s" % (keys[0], partition_id, part_nodes[0]part_nodes[0],part_nodes[2])
+            print "key %s belongs to partition %d with nodes %s, %s and %s" % (keys[0], partition_id, part_nodes[0], part_nodes[1], part_nodes[2])
             
             r = send_simple_get_request(hostname, part_nodes[0], keys[0], causal_payload='')
             d = r.json()
