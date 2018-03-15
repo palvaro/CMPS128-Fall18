@@ -294,7 +294,7 @@ if __name__ == "__main__":
     hostname = 'localhost'
     network = 'mynet'
     sudo = 'sudo'
-    tests_to_run = [1,2,3,4,5,6,7] #  
+    tests_to_run = [1,2,3,4,5,6,7,8] #  
 
     if 1 in tests_to_run:
         try: # Test 1
@@ -610,4 +610,54 @@ if __name__ == "__main__":
         except Exception as e:
             print "Exception in test 7"
             print e
-        stop_all_nodes(sudo)                        
+            traceback.print_exc(file=sys.stdout)
+        stop_all_nodes(sudo)
+
+    if 8 in tests_to_run:
+        try: # Test 8
+            test_description = "Test 8: Similar to Test case 7. Here I delete a partition (2 nodes) and check if no keys are dropped."
+            print HEADER + "" + test_description  + ENDC
+            nodes = start_kvs(6, container_name, K=2, net=network, sudo=sudo)
+            keys = generate_random_keys(60)
+            add_keys(hostname, nodes, keys, 1)
+
+            hm = {} # Dictionary of partition and its respective nodes
+            for x in range(len(nodes)):
+                part_id = get_partition_id_for_node(nodes[i])
+                if part_id not in hm:
+                    hm[part_id] = []
+                hm[part_id].append(nodes[i])
+
+            l = hm.keys()
+            part_id_to_be_deleted = l[0]
+            other_part_id = l[1]      
+            
+            #Cheking if partition to be deleted has two nodes 
+            if not len(hm[part_id_to_be_deleted]) == 2:
+                raise Exception("Every partition should have had 2 nodes")
+
+            print "Sending a remove node request to all nodes in partition: " + str(part_id_to_be_deleted)
+            removed_node = hm[part_id_to_be_deleted].pop() 
+            delete_node_from_kvs(hostname, hm[other_part_id][0], removed_node)
+            time.sleep(1)
+            removed_node = hm[part_id_to_be_deleted].pop() 
+            delete_node_from_kvs(hostname, hm[other_part_id][0], removed_node)
+            time.sleep(1)
+            hm.pop(part_id_to_be_deleted) #Removing partition from Dict
+
+            print "Verifying that no keys were dropped..."
+            total_keys = 0
+            for key in hm.keys():
+                get_str = "http://" + hostname + ":" + str(hm[key][0].access_port) + "/kvs/get_number_of_keys"
+                r = req.get(get_str)
+                d = r.json()
+                total_keys = total_keys + d["count"]                
+            if total_keys != len(keys):
+                raise Exception("Total number of keys in KVS are not equal to ones added initially")
+            else:
+                print "OK, no keys were removing partition."
+        except Exception as e:
+            print "Exception in test 8"
+            print e
+            traceback.print_exc(file=sys.stdout)
+        stop_all_nodes(sudo) 
