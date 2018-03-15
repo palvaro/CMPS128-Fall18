@@ -312,7 +312,7 @@ if __name__ == "__main__":
             
             print OKBLUE + "Obtaining partition id for key: " + keys[0] + ENDC
             partition_id_for_key = get_partition_id_for_key(nodes[0], keys[0])
-            print OKBLUE + "Obtaining partition members for partition " + partition_id_for_key  + ENDC
+            print OKBLUE + "Obtaining partition members for partition " + str(partition_id_for_key)  + ENDC
             members = get_partition_members(nodes[0], partition_id_for_key)
             if len(members) != 2:
                 raise Exception("ERROR: the size of a partition %d should be 2, but it is %d" % (partition_id_for_key, len(members)))
@@ -328,7 +328,7 @@ if __name__ == "__main__":
                 part_id = get_partition_id_for_node(part_nodes[i])
                 if part_id != partition_id_for_key:
                     raise Exception("ERRR: inconsistent information about partition ids!")
-            print OKBLUE + "Ok, killing all the nodes in the partition " + partition_id_for_key + ENDC
+            print OKBLUE + "Ok, killing all the nodes in the partition " + str(partition_id_for_key) + ENDC
             for node in part_nodes:
                 stop_node(node, sudo=sudo)
             other_nodes = [n for n in nodes if n not in part_nodes]
@@ -496,7 +496,7 @@ if __name__ == "__main__":
             print OKBLUE + "Updating the key..." + ENDC
             d = send_put_request(hostname, other_nodes[0],  keys[0], 17, causal_payload=d['causal_payload'])
 
-            print OKBLUE + "Connecting back the nodeand disconnecting other node in the partition" + ENDC
+            print OKBLUE + "Connecting back the node and disconnecting other node in the partition" + ENDC
             connect_node(part_nodes[0], network, sudo)
             time.sleep(TB)
             disconnect_node(part_nodes[1], network, sudo)
