@@ -345,7 +345,7 @@ if __name__ == "__main__":
             print OKGREEN + "OK, functionality for obtaining information about partitions looks good!" + ENDC
         except Exception as e:
             print FAIL + "Exception in test 1" + ENDC
-            print FAIL + e + ENDC
+            print FAIL + str(e) + ENDC
             traceback.print_exc(file=sys.stdout)
         stop_all_nodes(sudo)
 
@@ -403,7 +403,7 @@ if __name__ == "__main__":
             print OKBLUE + "Stopping the kvs" + ENDC
         except Exception as e:
             print FAIL + "Exception in test 2" + ENDC
-            print FAIL + e + ENDC
+            print FAIL + str(e) + ENDC
             traceback.print_exc(file=sys.stdout)
         stop_all_nodes(sudo)            
 
@@ -434,7 +434,7 @@ if __name__ == "__main__":
             print OKGREEN + "OK, the kvs works after we disconnected the node and connected it back." + ENDC
         except Exception as e:
             print FAIL + "Exception in test 3" + ENDC
-            print FAIL + e + ENDC
+            print FAIL + str(e) + ENDC
             traceback.print_exc(file=sys.stdout)
         stop_all_nodes(sudo)            
 
@@ -473,7 +473,7 @@ if __name__ == "__main__":
 
         except Exception as e:
             print FAIL + "Exception in test 4" + ENDC
-            print FAIL + e + ENDC
+            print FAIL + str(e) + ENDC
             traceback.print_exc(file=sys.stdout)
         stop_all_nodes(sudo)
 
@@ -507,7 +507,7 @@ if __name__ == "__main__":
             print OKGREEN + "OK, the value is up to date!" + ENDC
         except Exception as e:
             print FAIL + "Exception in test 5" + ENDC
-            print FAIL + e + ENDC
+            print FAIL + str(e) + ENDC
             traceback.print_exc(file=sys.stdout)
         stop_all_nodes(sudo)
 
@@ -534,7 +534,7 @@ if __name__ == "__main__":
             print OKGREEN + "OK, the value is up to date!" + ENDC
         except Exception as e:
             print FAIL + "Exception in test 6" + ENDC
-            print FAIL + e + ENDC
+            print FAIL + str(e) + ENDC
             traceback.print_exc(file=sys.stdout)
         stop_all_nodes(sudo)
 
@@ -609,7 +609,7 @@ if __name__ == "__main__":
                 print OKGREEN + "OK, no keys were dropped after adding new nodes." + ENDC
         except Exception as e:
             print FAIL + "Exception in test 7" + ENDC
-            print FAIL + e + ENDC
+            print FAIL + str(e) + ENDC
             traceback.print_exc(file=sys.stdout)
         stop_all_nodes(sudo)
 
@@ -658,6 +658,6 @@ if __name__ == "__main__":
                 print OKGREEN + "OK, no keys were removing partition." + ENDC
         except Exception as e:
             print FAIL + "Exception in test 8" + ENDC
-            print FAIL + e + ENDC
+            print FAIL + str(e) + ENDC
             traceback.print_exc(file=sys.stdout)
         stop_all_nodes(sudo) 
