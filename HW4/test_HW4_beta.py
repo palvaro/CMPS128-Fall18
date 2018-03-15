@@ -567,12 +567,12 @@ if __name__ == "__main__":
                     hm[part_id] = []
                 hm[part_id].append(nodes[i])
 
-            part_id1 = resp_dict1[partition_id]
+            part_id1 = resp_dict1["partition_id"]
             new_part_id = part_id1       
             if part_id1 not in hm:
                 hm[part_id1] = []
             hm[part_id1].append(n1)
-            part_id2 = resp_dict2[partition_id]
+            part_id2 = resp_dict2["partition_id"]
             hm[part_id2].append(n2)
 
             print OKBLUE + "Verifying that no keys were dropped..." + ENDC
