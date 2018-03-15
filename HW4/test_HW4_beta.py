@@ -381,7 +381,7 @@ if __name__ == "__main__":
             else:
                 print OKGREEN + "OK, the number of partitions is 4" + ENDC
 
-            print OKBLUE + "Deleting nodes ..."
+            print OKBLUE + "Deleting nodes ..." + ENDC
             resp_dict = delete_node_from_kvs(hostname, n3, nodes[0])
             number_of_partitions = resp_dict.get('number_of_partitions')
             if number_of_partitions != 3:
@@ -400,7 +400,7 @@ if __name__ == "__main__":
                 print FAIL + "ERROR: the number of partitions should be 2, but it is " + str(number_of_partitions) + ENDC
             else:
                 print OKGREEN + "OK, the number of partitions is 2" + ENDC
-            print OKBLUE + "Stopping the kvs"
+            print OKBLUE + "Stopping the kvs" + ENDC
         except Exception as e:
             print FAIL + "Exception in test 2" + ENDC
             print FAIL + e + ENDC
