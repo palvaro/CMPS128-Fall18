@@ -494,7 +494,7 @@ if __name__ == "__main__":
             disconnect_node(part_nodes[0], network, sudo)
 
             print OKBLUE + "Updating the key..." + ENDC
-            d = send_put_request(hostname, other_nodes[0],  keys[0], 17, causal_payload=d['causal_payload'])
+            d = send_put_request(hostname, other_nodes[0],  keys[0], 17, causal_payload='')
 
             print OKBLUE + "Connecting back the node and disconnecting other node in the partition" + ENDC
             connect_node(part_nodes[0], network, sudo)
