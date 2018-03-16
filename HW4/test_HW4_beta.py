@@ -561,7 +561,7 @@ if __name__ == "__main__":
             print OKGREEN + "Nodes were successfully added." + ENDC
 
             hm = {} # Dictionary of partition and its respective nodes
-            for x in range(len(nodes)):
+            for i in range(len(nodes)):
                 part_id = get_partition_id_for_node(nodes[i])
                 if part_id not in hm:
                     hm[part_id] = []
@@ -622,7 +622,7 @@ if __name__ == "__main__":
             add_keys(hostname, nodes, keys, 1)
 
             hm = {} # Dictionary of partition and its respective nodes
-            for x in range(len(nodes)):
+            for i in range(len(nodes)):
                 part_id = get_partition_id_for_node(nodes[i])
                 if part_id not in hm:
                     hm[part_id] = []
