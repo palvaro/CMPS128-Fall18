@@ -1,6 +1,6 @@
 # Fault Tolerant and Scalable Key-value Store
 
-## Due : Saturday, March 17th, 11:59pm
+## Due : Saturday, March 17th, 11:59pm (Extended to Monday, March 19th, 11.59 pm)
 
 
 In previous homework you built a scalable key-value store: the data can be partitioned across several nodes. We always can add more partitions to increase the capacity of a key-value store.
