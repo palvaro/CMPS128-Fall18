@@ -451,6 +451,7 @@ if __name__ == "__main__":
             part_nodes = [find_node(nodes, ip_port) for ip_port in members]
             print OKBLUE + "key %s belongs to partition %d with nodes %s and %s" % (keys[0], partition_id, part_nodes[0], part_nodes[1]) + ENDC
             
+            time.sleep(TB) #Giving some time for sync up
             print OKBLUE + "Disconnecting both nodes to verify that the key is unavailable" + ENDC
             disconnect_node(part_nodes[0], network, sudo)
             disconnect_node(part_nodes[1], network, sudo)
@@ -490,6 +491,7 @@ if __name__ == "__main__":
             part_nodes = [find_node(nodes, ip_port) for ip_port in members]
             print OKBLUE + "key %s belongs to partition %d with nodes %s and %s" % (keys[0], partition_id, part_nodes[0], part_nodes[1]) + ENDC
             
+            time.sleep(TB) #Giving some time for sync up
             print OKBLUE + "Disconnecting one of the nodes in the partition" + ENDC
             disconnect_node(part_nodes[0], network, sudo)
 
