@@ -290,7 +290,7 @@ def get_partition_members(node, partition_id):
     return d['partition_members']    
 
 if __name__ == "__main__":
-    container_name = 'hw3'
+    container_name = 'hw4'
     hostname = 'localhost'
     network = 'mynet'
     sudo = 'sudo'
