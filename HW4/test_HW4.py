@@ -59,7 +59,7 @@ def send_get_request(hostname, node, key, causal_payload=''):
         r = req.get(get_str)
         end_time = time.time()
         if end_time - start_time > AVAILABILITY_THRESHOLD:
-            print "THE SYSTEM IS NOT AVAILABLE: GET request took too long to execute : %s seconds" % (end_time - start_time)
+            print FAIL + "THE SYSTEM IS UNAVAILABLE: GET request took too long to execute : %s seconds" % (end_time - start_time) + ENDC
         if PRINT_HTTP_RESPONSES:
             print "Response:", r.text, r.status_code
         d = r.json()
@@ -95,7 +95,7 @@ def send_put_request(hostname, node, key, value, causal_payload=''):
         r = req.put(put_str, data=data)
         end_time = time.time()
         if end_time - start_time > AVAILABILITY_THRESHOLD:
-            print "THE SYSTEM IS NO AVAILABLE: PUT request took too long to execute : %s seconds" % (end_time - start_time)
+            print FAIL + "THE SYSTEM IS UNAVAILABLE: PUT request took too long to execute : %s seconds" % (end_time - start_time) + ENDC
         if PRINT_HTTP_RESPONSES:
             print "Response:", r.text, r.status_code
         d = r.json()
@@ -107,6 +107,30 @@ def send_put_request(hostname, node, key, value, causal_payload=''):
         print put_str + ' data field ' +  str(data)
         print e
     return d                
+
+def send_del_request(hostname, node, key, causal_payload=''):
+    d = None
+    del_str = "http://" + hostname + ":" + str(node.access_port) + "/kvs?key=" + key + "&causal_payload=" + causal_payload 
+    try:
+        if PRINT_HTTP_REQUESTS:
+            print "Del request: " + del_str
+        start_time = time.time()
+        r = req.delete(del_str)
+        end_time = time.time()
+        if end_time - start_time > AVAILABILITY_THRESHOLD:
+            print FAIL + "THE SYSTEM IS UNAVAILABLE: DELETE request took too long to execute : %s seconds" % (end_time - start_time) + ENDC
+        if PRINT_HTTP_RESPONSES:
+            print "Response:", r.text, r.status_code
+        d = r.json()
+        for field in ['msg', 'causal_payload', 'timestamp']:
+            if not d.has_key(field):
+                raise Exception("Field \"" + field + "\" is not present in response " + str(d))
+    except Exception as e:
+        print "THE FOLLOWING DELETE REQUEST RESULTED IN AN ERROR: ",
+        print del_str
+        print "Cannot delete key " + str(key)
+        print e
+    return d  
 
 def start_kvs(num_nodes, container_name, K=2, net='net', sudo='sudo'):
     ip_ports = []
@@ -294,7 +318,7 @@ if __name__ == "__main__":
     hostname = 'localhost'
     network = 'mynet'
     sudo = 'sudo'
-    tests_to_run = [1,2,3,4,5,6,7,8] #  
+    tests_to_run = [1,2,3,4,5,6,7,8,9] #1,2,3,4,5,6,7,8,9  
 
     if 1 in tests_to_run:
         try: # Test 1
@@ -609,7 +633,7 @@ if __name__ == "__main__":
             if total_keys != len(keys):
                 raise Exception("Total number of keys in KVS are not equal to ones added initially")
             else:
-                print OKGREEN + "OK, no keys were dropped after adding new nodes." + ENDC
+                print OKGREEN + "OK, no keys were dropped after remvoving faulty instance" + ENDC
         except Exception as e:
             print FAIL + "Exception in test 7" + ENDC
             print FAIL + str(e) + ENDC
@@ -658,9 +682,48 @@ if __name__ == "__main__":
             if total_keys != len(keys):
                 raise Exception("Total number of keys in KVS are not equal to ones added initially")
             else:
-                print OKGREEN + "OK, no keys were removing partition." + ENDC
+                print OKGREEN + "OK, no keys were dropped when removing partition." + ENDC
         except Exception as e:
             print FAIL + "Exception in test 8" + ENDC
             print FAIL + str(e) + ENDC
             traceback.print_exc(file=sys.stdout)
-        stop_all_nodes(sudo) 
+        stop_all_nodes(sudo)
+
+    if 9 in tests_to_run:
+        try: # Test 9
+            test_description = "Test 9: Delete Key test case. Bonus"
+            print HEADER + "" + test_description  + ENDC
+            nodes = start_kvs(2, container_name, K=2, net=network, sudo=sudo)
+            keys = generate_random_keys(10)
+            add_keys(hostname, nodes, keys, 5)
+            node1 = nodes[0]
+            node2 = nodes[1]
+            print OKBLUE + "Making a put request to one of the key " + keys[0] + ENDC
+            d = send_put_request(hostname, node1, keys[0], 'pupper', causal_payload='')
+            d = send_get_request(hostname, node2, keys[0], causal_payload=d['causal_payload'])
+            if d['value'] != 'pupper':
+                raise Exception("ERROR: The kvs did not store value pupper for key dog")
+
+            print OKBLUE + "Disconnecting one of the nodes..." + ENDC    
+            disconnect_node(node1, network, sudo)
+            time.sleep(1)
+            print OKBLUE + "Deleting the key " + keys[0]  + ENDC
+            d = send_del_request(hostname, node2, keys[0], causal_payload=d['causal_payload'])
+            print OKBLUE + "Merging the network..." + ENDC
+            connect_node(node1, network, sudo)
+            time.sleep(TB)
+
+            print OKBLUE + "Checking if the key " + keys[0] + " exists after network merge"+ ENDC
+            r = send_simple_get_request(hostname, node1, keys[0], causal_payload=d['causal_payload'])
+            d = r.json()
+            if r.status_code not in [404, '404']:
+                raise Exception("Error, status code %s is not 200 or 201" % r.status_code)
+            if not d.has_key('msg') or  d['msg'] != 'error':
+                raise Exception("ERROR: the key exists even after network healed.")
+
+            print OKGREEN + "OK, the key was deleted successfully" + ENDC                  
+        except Exception as e:
+            print FAIL + "Exception in test 9" + ENDC
+            print FAIL + str(e) + ENDC
+            traceback.print_exc(file=sys.stdout)
+        stop_all_nodes(sudo)                                     
