@@ -8,9 +8,8 @@
 |Office hours: | W 12-1PM, F 11AM-12 |
 |Prerequisites: | CMPS101 or CE150 required. CMPS111 or CMPS105 recommended. |
 |Text: | [Distributed Systems](http://www.amazon.com/Distributed-Systems-Concepts-Design-5th/dp/0132143011/), Coulouris et al.|
-|TA: | Umang Sardesai (email: umang at ucsc )|
-|Labs: | TBD|
-|TA office hours: | TBD|
+|TA: | [Umang Sardesai](https://umangsardesai.github.io) (email: umang at ucsc )|
+|TA sections: | Mon-10.40-12.10pm @ Soc Sci 1 153 and Wed-2.40-4.10 pm @ Crown 208|
 |Modules: | [Modules](modules.md)|
 |Readings (in flux): | [Readings](readings.md)|
 
