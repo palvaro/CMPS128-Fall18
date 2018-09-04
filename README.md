@@ -1,15 +1,15 @@
-# CMPS128 Winter 2018
+# CMPS128 Fall 2018
 ## Distributed Systems
 | key | value | 
 |-----|-------|
-|When: | Monday, Wednesday and Friday at <b>1:20 PM</b>. |
-|Where: | Merrill Classroom 102 |
+|When: | Monday, Wednesday and Friday at <b>2:40 PM</b>. |
+|Where: | Thimann Lecture 001 |
 |Who: | [Peter Alvaro](http://people.ucsc.edu/~palvaro/) |
-|Office hours: | W 12-1PM, F 11AM-12 |
+|Office hours: | TBD |
 |Prerequisites: | CMPS101 or CE150 required. CMPS111 or CMPS105 recommended. |
-|Text: | [Distributed Systems](http://www.amazon.com/Distributed-Systems-Concepts-Design-5th/dp/0132143011/), Coulouris et al.|
-|TA: | [Umang Sardesai](https://umangsardesai.github.io) (email: umang at ucsc )|
-|TA sections: | Mon-10.40-12.10pm @ Soc Sci 1 153 and Wed-2.40-4.10 pm @ Crown 208|
+|Text: | [Distributed Systems](http://www.amazon.com/Distributed-Systems-Concepts-Design-5th/dp/0132143011/), Coulouris et al. -- Optional|
+|TA: | Elisabeth Oliver |
+|TA sections: | TBD |
 |Modules: | [Modules](modules.md)|
 |Readings (in flux): | [Readings](readings.md)|
 
