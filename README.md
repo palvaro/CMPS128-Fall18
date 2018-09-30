@@ -5,7 +5,7 @@
 |When: | Monday, Wednesday and Friday at <b>2:40 PM</b>. |
 |Where: | Thimann Lecture 001 |
 |Who: | [Peter Alvaro](http://people.ucsc.edu/~palvaro/) |
-|Office hours: | Fridays at 1PM and TBD |
+|Office hours: | Mondays 1-2pm and Wednesdays 12-1pm |
 |Prerequisites: | CMPS101 or CE150 required. CMPS111 or CMPS105 recommended. |
 |Text: | [Distributed Systems](http://www.amazon.com/Distributed-Systems-Concepts-Design-5th/dp/0132143011/), Coulouris et al. -- Optional|
 |TA: | Elisabeth Oliver and Nidhi Shah|
