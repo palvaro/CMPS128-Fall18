@@ -10,7 +10,7 @@
 |Text: | [Distributed Systems](http://www.amazon.com/Distributed-Systems-Concepts-Design-5th/dp/0132143011/), Coulouris et al. -- Optional|
 |TA: | Elisabeth Oliver and Nidhi Shah|
 |TA sections: | Tuesdays 9:50-10:55am in Kresge 323 |
-|| Fridays 10:40-11:45am in Kresge 323
+|| Fridays 10:40-11:45am in Kresge 327
 |Modules: | [Modules](modules.md)|
 |Readings (in flux): | [Readings](readings.md)|
 
