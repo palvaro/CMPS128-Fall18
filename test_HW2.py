@@ -149,7 +149,7 @@ class TestHW2(unittest.TestCase):
         res = requests.put(self.__class__.nodes_address[0] + '/keyValue-store/subject', data={'val': self.__class__.val2})
         d = res.json()
         self.assertEqual(d['replaced'], 1)
-        self.assertEqual(d['msg'], 'Success')
+        self.assertEqual(d['msg'], 'Updated successfully')
 
     
     def test_n_get_nonexistent_key(self):
