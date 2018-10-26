@@ -163,7 +163,7 @@ class TestHW2(unittest.TestCase):
         res = requests.get(self.__class__.nodes_address[2] + '/keyValue-store/' + self.__class__.key1)
         d = res.json()
         self.assertEqual(d['msg'], 'Success')
-        self.assertEqual(d['value'], self.__class__.val2)
+        self.assertEqual(d['value'], self.__class__.val1)
 
     def test_p_put_key_too_long(self):
         res = requests.put(self.__class__.nodes_address[0] + '/keyValue-store/'+self.__class__.key3, data={'val':self.__class__.val2})
